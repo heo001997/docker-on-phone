@@ -30,6 +30,17 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
 expect {
     "login:" {
         send "root\r\r"
+
+        sleep 1
+        # UP INTERNET
+        send "setup-interfaces -a"
+        send "ifup eth0"
+        send "echo 'nameserver 1.1.1.1' > /etc/resolv.conf"
+
+        # Setup Alpine with answerfile
+        send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile"
+        send "setup-alpine -f answerfile"
+
         exp_continue
     }
     timeout {
@@ -37,15 +48,6 @@ expect {
         exit 1
     }
 }
-
-# UP INTERNET
-exec setup-interfaces -a
-exec ifup eth0
-exec echo "nameserver 1.1.1.1" > /etc/resolv.conf
-
-# Setup Alpine with answerfile
-exec wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile
-exec setup-alpine -f answerfile
 
 # Wait for next action
 #expect {
