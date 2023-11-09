@@ -1,0 +1,63 @@
+#!/usr/bin/expect -f
+
+# Disable the timeout so expect waits indefinitely
+set timeout 240
+
+# Check the number of arguments
+if {$argc != 3} {
+    puts "Usage: $argv0 <cpus> <ram-in-MB> <hard-disk-in-GB>"
+    exit 1
+}
+
+# Assign arguments to variables
+set cpus [lindex $argv 0]
+set memory [lindex $argv 1]
+set hard_disk [lindex $argv 2]
+set iso_file [lindex [glob alpine-virt-*-x86_64.iso] 0]
+
+# Start build QEMU image
+exec qemu-img create -f qcow2 alpine.img ${hard_disk}G
+
+# Start the QEMU process
+spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
+  -drive if=pflash,format=raw,read-only=on,file=$env(PREFIX)/share/qemu/edk2-x86_64-code.fd \
+  -netdev user,id=n1,hostfwd=tcp::2222-:22 \
+  -device virtio-net,netdev=n1 \
+  -cdrom $iso_file \
+  -nographic alpine.img
+
+# Wait for the login prompt
+expect {
+    "login:" {
+        send "root\r\r"
+        exp_continue
+    }
+    timeout {
+        puts "Login prompt not received within 240 seconds."
+        exit 1
+    }
+}
+
+# UP INTERNET
+exec setup-interfaces -a
+exec ifup eth0
+exec echo "nameserver 1.1.1.1" > /etc/resolv.conf
+
+# Setup Alpine with answerfile
+exec wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile
+exec setup-alpine -f answerfile
+
+# Wait for next action
+#expect {
+#    "login:" {
+#        send "root\r\r"
+#        exp_continue
+#    }
+#    timeout {
+#        puts "Login prompt not received within 240 seconds."
+#        exit 1
+#    }
+#}
+
+# Hand over the interaction to the user
+interact

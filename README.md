@@ -5,9 +5,7 @@
 Install git on Termux & clone this repo: 
 
 ```bash
-pkg add git # if you don't have git yet
-
-pkg add expect # to automate fill inputs
+pkg add git expect gdb glob # to automate fill inputs
 
 git clone https://github.com/heo001997/docker-on-phone.git && cd docker-on-phone 
 ```

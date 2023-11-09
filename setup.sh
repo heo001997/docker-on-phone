@@ -1,8 +1,7 @@
 #!/bin/bash
 
 ./download_alpine_latest.sh
-./up_image.sh 6 6144 64
-login as root (no password)
+./up_image.expect 6 6144 64
 ./up_internet.sh
 setup-alpine -f answerfile
 # Other Option choose default,
