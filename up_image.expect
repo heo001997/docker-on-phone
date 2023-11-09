@@ -28,26 +28,16 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
 expect {
     "login:" {
         send "root\r"
-        sleep 1
         send "clear\r"
 
         # UP INTERNET
-        sleep 1
         send "setup-interfaces -a\r"
-        sleep 1
         send "ifup eth0\r"
-        sleep 1
         send "echo 'nameserver 1.1.1.1' > /etc/resolv.conf \r"
-        sleep 1
 
         # Setup Alpine with answerfile
         send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile \r"
-        sleep 1
         send "clear\r"
-        # Send enough backspaces to clear the longest possible line
-        send "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
-
-        sleep 1
         send "setup-alpine -f answerfile\r"
 
         exp_continue
@@ -70,13 +60,10 @@ expect {
         exp_continue
     }
     # Erase disk(s)
-    "Erase the above disk(s) and continue? (y/n)" {
-        sleep 1
-        # Send enough backspaces to clear the longest possible line
-        send "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
-        sleep 1
+    "Erase the above disk(s) and continue? (y/n) [n]" {
+        sleep 3000
         send "y"
-        sleep 1
+        sleep 3000
         send "\r"
         exp_continue
     }
