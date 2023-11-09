@@ -68,7 +68,10 @@ expect {
         exp_continue
     }
     # Erase disk(s)
-    "Erase the above disk(s) and continue? (y/n) \[n\]" {
+    "Erase the above disk(s) and continue? (y/n) " {
+        sleep 3
+        # Send enough backspaces to clear the longest possible line
+        send "\b\b\b\b\b\r"
         sleep 3
         send "y"
         sleep 3
@@ -77,12 +80,12 @@ expect {
     }
     # Poweroff after finish installation
     "Installation is complete. Please reboot." {
-        sleep 1
+        sleep 3
         # Send enough backspaces to clear the longest possible line
-        send "\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b\b"
-        sleep 1
+        send "\b\b\b\b\b\r"
+        sleep 3
         send "poweroff\r"
-        sleep 1
+        sleep 3
         interact
     }
     timeout {
