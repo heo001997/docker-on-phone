@@ -29,7 +29,7 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
 
 # Wait for the login prompt
 expect {
-    -re "\\\033\\[\[0-9]+;[0-9]+R" {
+    -re "\033\\[[0-9]+;[0-9]+R" {
         # Ignore the cursor position report and continue
         exp_continue
     }
