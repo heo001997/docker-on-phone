@@ -47,25 +47,33 @@ expect {
         send "setup-alpine -f answerfile"
         send "\r"
 
-        # Wait for input setup alpine - all default except erase
-        # New password
-        send "\r"
-        send "\r"
-        # New user
-        send "\r"
-        send "\r"
-        # Erase disk(s)
-        send "y\r"
-        # Poweroff after finish installation
-        send "poweroff"
-
         exp_continue
+    }
+    # Wait for input setup alpine - all default except erase
+    # Password
+    "New password:" {
+        send "\r"
+        send "\r"
+        exp_continue
+    }
+    # New user
+    "Setup a user?" {
+        send "\r"
+        send "\r"
+        exp_continue
+    }
+    # Erase disk(s)
+    "Erase the above disk" {
+        send "y\r"
+        exp_continue
+    }
+    # Poweroff after finish installation
+    "Installation is complete. Please reboot." {
+        send "poweroff"
+        interact
     }
     timeout {
         puts "Login prompt not received within 240 seconds."
         exit 1
     }
 }
-
-# Hand over the interaction to the user
-interact
