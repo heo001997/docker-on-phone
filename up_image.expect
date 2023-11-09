@@ -69,21 +69,11 @@ expect {
     }
     # Erase disk(s)
     "Erase the above disk(s) and continue? (y/n) " {
-        sleep 3
-        # Send enough backspaces to clear the longest possible line
-        send "\b\b\b\b\b\r"
-        sleep 3
-        send "\r"
-        sleep 3
-        send "\r"
-        sleep 3
-        send "\r"
-        sleep 3
-        send "\r"
-        sleep 3
+        sleep 10
         send "y"
         sleep 3
         send "\r"
+
         exp_continue
     }
     # Poweroff after finish installation
