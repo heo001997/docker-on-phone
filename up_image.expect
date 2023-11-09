@@ -28,17 +28,25 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
 expect {
     "login:" {
         send "root\r"
+        sleep 1
         send "clear\r"
+        sleep 1
 
         # UP INTERNET
         send "setup-interfaces -a\r"
+        sleep 1
         send "ifup eth0\r"
+        sleep 1
         send "echo 'nameserver 1.1.1.1' > /etc/resolv.conf \r"
+        sleep 1
 
         # Setup Alpine with answerfile
         send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile \r"
+        sleep 1
         send "clear\r"
+        sleep 1
         send "setup-alpine -f answerfile\r"
+        sleep 1
 
         exp_continue
     }
