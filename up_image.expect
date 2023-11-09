@@ -47,6 +47,18 @@ expect {
         send "setup-alpine -f answerfile"
         send "\r"
 
+        # Wait for input setup alpine - all default except erase
+        # New password
+        send "\r"
+        send "\r"
+        # New user
+        send "\r"
+        send "\r"
+        # Erase disk(s)
+        send "y\r"
+        # Poweroff after finish installation
+        send "poweroff"
+
         exp_continue
     }
     timeout {
@@ -55,55 +67,5 @@ expect {
     }
 }
 
-# Wait for input setup alpine - all default except erase
-# Password
-expect {
-    "New password:" {
-        send "\r"
-        send "\r"
-        exp_continue
-    }
-    timeout {
-        puts "New password require not received within 240 seconds."
-        exit 1
-    }
-}
-
-# New user
-expect {
-    "Setup a user?" {
-        send "\r"
-        send "\r"
-        exp_continue
-    }
-    timeout {
-        puts "New password require not received within 240 seconds."
-        exit 1
-    }
-}
-
-# Erase disk(s)
-expect {
-    "Erase the above disk" {
-        send "y\r"
-        exp_continue
-    }
-    timeout {
-        puts "Erase disk request not received within 240 seconds."
-        exit 1
-    }
-}
-
-# Poweroff after finish installation
-expect {
-    "Installation is complete. Please reboot." {
-        send "poweroff"
-
-        # Hand over the interaction to the user
-        interact
-    }
-    timeout {
-        puts "Erase disk request not received within 240 seconds."
-        exit 1
-    }
-}
+# Hand over the interaction to the user
+interact
