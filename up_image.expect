@@ -1,6 +1,4 @@
 #!/usr/bin/expect -f
-
-# Disable the timeout so expect waits indefinitely
 set timeout 240
 
 # Check the number of arguments
@@ -57,17 +55,55 @@ expect {
     }
 }
 
-# Wait for next action
-#expect {
-#    "login:" {
-#        send "root\r\r"
-#        exp_continue
-#    }
-#    timeout {
-#        puts "Login prompt not received within 240 seconds."
-#        exit 1
-#    }
-#}
+# Wait for input setup alpine - all default except erase
+# Password
+expect {
+    "New password:" {
+        send "\r"
+        send "\r"
+        exp_continue
+    }
+    timeout {
+        puts "New password require not received within 240 seconds."
+        exit 1
+    }
+}
 
-# Hand over the interaction to the user
-interact
+# New user
+expect {
+    "Setup a user?" {
+        send "\r"
+        send "\r"
+        exp_continue
+    }
+    timeout {
+        puts "New password require not received within 240 seconds."
+        exit 1
+    }
+}
+
+# Erase disk(s)
+expect {
+    "Erase the above disk" {
+        send "y\r"
+        exp_continue
+    }
+    timeout {
+        puts "Erase disk request not received within 240 seconds."
+        exit 1
+    }
+}
+
+# Poweroff after finish installation
+expect {
+    "Installation is complete. Please reboot." {
+        send "poweroff"
+
+        # Hand over the interaction to the user
+        interact
+    }
+    timeout {
+        puts "Erase disk request not received within 240 seconds."
+        exit 1
+    }
+}
