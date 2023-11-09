@@ -59,12 +59,14 @@ expect {
     }
     # Erase disk(s)
     "Erase the above disk" {
-        send "y \r"
+        sleep 1
+        send "y\r"
         exp_continue
     }
     # Poweroff after finish installation
     "Installation is complete. Please reboot." {
-        send "poweroff \r"
+        sleep 1
+        send "poweroff\r"
         interact
     }
     timeout {
