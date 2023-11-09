@@ -7,13 +7,15 @@ Install git on Termux & clone this repo:
 ```bash
 pkg add git # if you don't have git yet
 
-git clone git@github.com:heo001997/docker-on-phone.git
+pkg add expect # to automate fill inputs
+
+git clone https://github.com/heo001997/docker-on-phone.git && cd docker-on-phone 
 ```
 
 Set executable permission for files & run the setup script:
 
 ```bash
-find docker-on-phone -type f -name "*.sh" -exec chmod +x {} +
+find . -type f -name "*.sh" -exec chmod +x {} +
 
 ./docker-on-phone/setup.sh
 ```
