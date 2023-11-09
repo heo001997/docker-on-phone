@@ -1,4 +1,8 @@
 #!/usr/bin/expect -f
+
+# Set the terminal type to avoid issues with escape sequences
+set env(TERM) "vt100"
+
 set timeout 240
 
 # Check the number of arguments
