@@ -1,7 +1,6 @@
 #!/usr/bin/expect -f
 
 # Set the terminal type to avoid issues with escape sequences
-set env(TERM) "vt100"
 set timeout 240
 
 # Check the number of arguments
@@ -29,48 +28,92 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
 
 # Wait for the login prompt
 expect {
-    -re "\033\\[[0-9]+;[0-9]+R" {
-        # Ignore the cursor position report and continue
-        exp_continue
-    }
     "login:" {
         send "root\r"
+        send "\b\r"
+        send "\b\r"
+        send "\b\r"
+        send "\b\r"
         sleep 1
         send "clear\r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
 
         # UP INTERNET
         send "setup-interfaces -a\r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "ifup eth0\r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "echo 'nameserver 1.1.1.1' > /etc/resolv.conf \r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
 
         # Setup Alpine with answerfile
         send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile \r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "clear\r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "setup-alpine -f answerfile\r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
 
         exp_continue
     }
     # Wait for input setup alpine - all default except erase
     # Password
     "New password:" {
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "\r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "\r"
         exp_continue
     }
     # New user
     "Setup a user?" {
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "\r"
-        sleep 1
+        send "\b\r"
+send "\b\r"
+send "\b\r"
+send "\b\r"
+sleep 1
         send "\r"
         exp_continue
     }
@@ -87,7 +130,9 @@ expect {
     "Installation is complete. Please reboot." {
         sleep 3
         # Send enough backspaces to clear the longest possible line
-        send "\b\b\b\b\b\r"
+        send "\b\r"
+        send "\b\r"
+        send "\b\r"
         sleep 3
         send "poweroff\r"
         sleep 3
