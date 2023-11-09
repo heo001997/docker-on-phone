@@ -73,6 +73,14 @@ expect {
         # Send enough backspaces to clear the longest possible line
         send "\b\b\b\b\b\r"
         sleep 3
+        send "\r"
+        sleep 3
+        send "\r"
+        sleep 3
+        send "\r"
+        sleep 3
+        send "\r"
+        sleep 3
         send "y"
         sleep 3
         send "\r"
