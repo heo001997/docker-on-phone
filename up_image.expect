@@ -27,18 +27,18 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
 # Wait for the login prompt
 expect {
     "login:" {
-        send "root \r"
+        send "root\r"
         sleep 1
-        send "clear \r"
+        send "clear\r"
 
         # UP INTERNET
-        send "setup-interfaces -a \r"
-        send "ifup eth0 \r"
+        send "setup-interfaces -a\r"
+        send "ifup eth0\r"
         send "echo 'nameserver 1.1.1.1' > /etc/resolv.conf \r"
 
         # Setup Alpine with answerfile
         send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile \r"
-        send "setup-alpine -f answerfile \r"
+        send "setup-alpine -f answerfile\r"
 
         exp_continue
     }
@@ -59,12 +59,18 @@ expect {
     }
     # Erase disk(s)
     "Erase the above disk" {
+        send "\001"  ;# This sends the Ctrl+A character to move to the beginning of the line.
+        send "\025"  ;# This sends the Ctrl+U character to clear the line.
+
         sleep 1
         send "y\r"
         exp_continue
     }
     # Poweroff after finish installation
     "Installation is complete. Please reboot." {
+        send "\001"  ;# This sends the Ctrl+A character to move to the beginning of the line.
+        send "\025"  ;# This sends the Ctrl+U character to clear the line.
+
         sleep 1
         send "poweroff\r"
         interact
