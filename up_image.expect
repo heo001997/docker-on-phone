@@ -60,10 +60,10 @@ expect {
         exp_continue
     }
     # Erase disk(s)
-    "Erase the above disk(s) and continue? (y/n) [n]" {
-        sleep 3000
+    "Erase the above disk(s) and continue? (y/n) \[n\]" {
+        sleep 3
         send "y"
-        sleep 3000
+        sleep 3
         send "\r"
         exp_continue
     }
