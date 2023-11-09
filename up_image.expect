@@ -2,7 +2,6 @@
 
 # Set the terminal type to avoid issues with escape sequences
 set env(TERM) "vt100"
-
 set timeout 240
 
 # Check the number of arguments
@@ -30,6 +29,10 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
 
 # Wait for the login prompt
 expect {
+    -re "\[\d+;\d+R" {
+        # Ignore the cursor position report and continue
+        exp_continue
+    }
     "login:" {
         send "root\r"
         sleep 1
