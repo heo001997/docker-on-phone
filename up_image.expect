@@ -38,6 +38,10 @@ expect {
 
         # Setup Alpine with answerfile
         send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile \r"
+
+        send "\001"  ;# This sends the Ctrl+A character to move to the beginning of the line.
+        send "\025"  ;# This sends the Ctrl+U character to clear the line.
+
         send "setup-alpine -f answerfile\r"
 
         exp_continue
