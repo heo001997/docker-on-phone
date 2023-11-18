@@ -1,0 +1,25 @@
+#!/usr/bin/expect -f
+
+# Set the terminal type to avoid issues with escape sequences
+set timeout 240
+
+spawn setup-disk -m sys -s 0 /dev/sda
+
+expect {
+    "Erase the above disk(s) and continue? (y/n)" {
+        sleep 1
+        send "y\r"
+        sleep 1
+        exp_continue
+    }
+    "Installation is complete. Please reboot." {
+        sleep 1
+        send "poweroff\r"
+        sleep 1
+        exit 0
+    }
+    timeout {
+        puts "Login prompt not received within 240 seconds."
+        exit 1
+    }
+}

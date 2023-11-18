@@ -73,7 +73,11 @@ expect {
     }
     "Erase the above disk(s) and continue? (y/n)" {
         sleep 2
-        interact
+        send "y"
+        sleep 2
+        send "\r"
+        sleep 2
+        exp_continue
     }
     "Installation is complete. Please reboot." {
         sleep 2
