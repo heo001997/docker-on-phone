@@ -34,7 +34,7 @@ spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -
 
 # Wait for the login prompt
 expect {
-    " login:" {
+    "localhost login:" {
         sleep 1
         send "root \r"
         sleep 1
@@ -50,13 +50,15 @@ expect {
         sleep 1
 
         # UP INTERNET
-        # send "./up_internet.sh \r"
+         send "./up_internet.sh \r"
 
         # Install expect
-        # send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
+         send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
 
         # Start script on vm
-        # send "expect setup_virtual.expect\r"
+         send "expect setup_virtual.expect\r"
+
+        exp_continue
     }
     timeout {
         puts "Login prompt not received within 240 seconds."
