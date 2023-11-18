@@ -23,7 +23,7 @@ exec mkdir -p $env(PREFIX)/share/virtual_mount
 exec cp -r virtual_mount $env(PREFIX)/share/
 
 # Start the QEMU process
-spawn qemu-system-x86_64 -machine q35 -m $(($memory*1024)) -smp cpus=$cpus -cpu qemu64 \
+spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -cpu qemu64 \
   -drive if=pflash,format=raw,read-only=on,file=$env(PREFIX)/share/qemu/edk2-x86_64-code.fd \
   -netdev user,id=n1,hostfwd=tcp::2222-:22 \
   -device virtio-net,netdev=n1 \
