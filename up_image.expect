@@ -19,7 +19,7 @@ set iso_file [lindex [glob alpine-virt-*-x86_64.iso] 0]
 exec qemu-img create -f qcow2 alpine.img ${hard_disk}G
 
 # Build virtual mount
-exec mkdir $env(PREFIX)/share/virtual_mount
+exec mkdir -p $env(PREFIX)/share/virtual_mount
 exec cp -r virtual_mount $env(PREFIX)/share/
 
 # Start the QEMU process
@@ -39,7 +39,7 @@ expect {
         sleep 1
 
         # Copy files from hostshare
-        mkdir /mnt/hostshare
+        mkdir -p /mnt/hostshare
         mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare
         cp /mnt/hostshare/* ~/
 
