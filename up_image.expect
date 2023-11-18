@@ -5,7 +5,7 @@ set timeout 240
 
 # Check the number of arguments
 if {$argc != 3} {
-    puts "Usage: $argv0 <cpus> <ram-in-MB> <hard-disk-in-GB>"
+    puts "Usage: $argv0 <cpus> <ram-in-GB> <hard-disk-in-GB>"
     exit 1
 }
 
@@ -18,15 +18,19 @@ set iso_file [lindex [glob alpine-virt-*-x86_64.iso] 0]
 # Start build QEMU image
 exec qemu-img create -f qcow2 alpine.img ${hard_disk}G
 
+# Build virtual mount
+exec mkdir $PREFIX/share/virtual_mount
+exec cp -r virtual_mount $PREFIX/share/
+
 # Start the QEMU process
-spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
+spawn qemu-system-x86_64 -machine q35 -m $(($memory*1024)) -smp cpus=$cpus -cpu qemu64 \
   -drive if=pflash,format=raw,read-only=on,file=$env(PREFIX)/share/qemu/edk2-x86_64-code.fd \
   -netdev user,id=n1,hostfwd=tcp::2222-:22 \
   -device virtio-net,netdev=n1 \
   -cdrom $iso_file \
+  -fsdev local,id=fsdev0,path=$PREFIX/share/virtual_mount,security_model=mapped \
+  -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare \
   -nographic alpine.img
-
-#touch virtual_setup.expect && chmod +x virtual_setup.expect && vi virtual_setup.expect
 
 # Wait for the login prompt
 expect {
@@ -34,27 +38,39 @@ expect {
         send "root\r"
         sleep 1
 
+        # Copy files from hostshare
+        mkdir /mnt/hostshare
+        mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare
+        cp /mnt/hostshare/* ~/
+
         # UP INTERNET
-        send "setup-interfaces -a\r"
-        sleep 1
-        send "ifup eth0\r"
-        sleep 1
-        send "echo 'nameserver 1.1.1.1' > /etc/resolv.conf \r"
-        sleep 1
+        send "./up_internet.sh \r"
 
         # Install expect
         send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
 
-        # Setup Alpine with answerfile
-        send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile \r"
+        # Setup Alpine
+        send "setup-alpine -f answerfile"
+
         exp_continue
     }
-    # Run up_image.expect in virtual machine
-    # This to make setup-alpine input with invalid keystroke
-    "'answerfile' saved" {
-        sleep 2
-        send "./up_image.expect"
-        sleep 2
+    "New password:" {
+        send "\r"
+        send "\r"
+        exp_continue
+    }
+    "Setup a user?" {
+        send "\r"
+        send "\r"
+        exp_continue
+    }
+    "Erase the above disk(s) and continue? (y/n)" {
+        send "y\r"
+        exp_continue
+    }
+    # Poweroff after finish installation
+    "Installation is complete. Please reboot." {
+        send "poweroff\r"
         exit 0
     }
     timeout {

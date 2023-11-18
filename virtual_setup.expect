@@ -1,15 +1,5 @@
 #!/usr/bin/expect -f
 
-Hi Froonze fam @3, my name is Tu - I'm living in Hanoi now.
-
-I'm appriciate for the chance to join in our product development with all of you guys.
-
-I'm a learner with some weird sense of humour.
-
-thank you
-
-I just join my company slack, we have 3 people and I'm the 4th, say hi with fun and respect to other for me
-
 # Set the terminal type to avoid issues with escape sequences
 set timeout 240
 
@@ -19,31 +9,24 @@ spawn setup-alpine -f answerfile
 # Wait for the login prompt
 expect {
     "New password:" {
-        sleep 1
         send "\r"
-        sleep 1
         send "\r"
         exp_continue
     }
     # New user
     "Setup a user?" {
-        sleep 1
         send "\r"
-        sleep 1
         send "\r"
         exp_continue
     }
     # Erase disk(s)
-    "Erase the above disk(s) and continue? (y/n) " {
-        sleep 1
+    "Erase the above disk(s) and continue? (y/n)" {
         send "y\r"
         exp_continue
     }
 #    # Poweroff after finish installation
 #    "Installation is complete. Please reboot." {
-#        sleep 1
 #        send "poweroff\r"
-#        sleep 1
 #        interact
 #    }
     timeout {
