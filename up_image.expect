@@ -19,8 +19,8 @@ set iso_file [lindex [glob alpine-virt-*-x86_64.iso] 0]
 exec qemu-img create -f qcow2 alpine.img ${hard_disk}G
 
 # Build virtual mount
-exec mkdir $PREFIX/share/virtual_mount
-exec cp -r virtual_mount $PREFIX/share/
+exec mkdir $env(PREFIX)/share/virtual_mount
+exec cp -r virtual_mount $env(PREFIX)/share/
 
 # Start the QEMU process
 spawn qemu-system-x86_64 -machine q35 -m $(($memory*1024)) -smp cpus=$cpus -cpu qemu64 \
@@ -28,7 +28,7 @@ spawn qemu-system-x86_64 -machine q35 -m $(($memory*1024)) -smp cpus=$cpus -cpu 
   -netdev user,id=n1,hostfwd=tcp::2222-:22 \
   -device virtio-net,netdev=n1 \
   -cdrom $iso_file \
-  -fsdev local,id=fsdev0,path=$PREFIX/share/virtual_mount,security_model=mapped \
+  -fsdev local,id=fsdev0,path=$env(PREFIX)/share/virtual_mount,security_model=mapped \
   -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare \
   -nographic alpine.img
 
