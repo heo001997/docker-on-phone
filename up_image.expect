@@ -35,18 +35,19 @@ spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -
 # Wait for the login prompt
 expect {
     "login:" {
+        after 2000
         send "root\r"
-        after 1000
+        after 2000
 
         # Copy files from hostshare
         send "mkdir -p /mnt/hostshare\r"
-        after 1000
+        after 2000
         send "mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare"
         send "\r"
-        after 1000
+        after 2000
         send "cp /mnt/hostshare/* ~/"
         send "\r"
-        after 1000
+        after 2000
 
         # UP INTERNET
         send "./up_internet.sh \r"
