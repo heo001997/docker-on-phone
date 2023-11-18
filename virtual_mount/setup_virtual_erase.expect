@@ -7,9 +7,9 @@ spawn setup-disk -m sys -s 0 /dev/sda
 
 expect {
     "Erase the above disk(s) and continue? (y/n)" {
-        after 1000
+        after 2000
         send "y\r"
-        after 1000
+        after 2000
         exp_continue
     }
     timeout {
