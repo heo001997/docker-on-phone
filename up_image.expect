@@ -39,9 +39,9 @@ expect {
         sleep 1
 
         # Copy files from hostshare
-        mkdir -p /mnt/hostshare
-        mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare
-        cp /mnt/hostshare/* ~/
+        send "mkdir -p /mnt/hostshare"
+        send "mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare"
+        send "cp /mnt/hostshare/* ~/"
 
         # UP INTERNET
         send "./up_internet.sh \r"
