@@ -55,8 +55,8 @@ expect {
         # Install expect
         send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
 
-        spawn sh -c "expect setup_virtual.expect"
-        expect eof
+        # Start script on vm
+        send "expect setup_virtual.expect"
     }
     timeout {
         puts "Login prompt not received within 240 seconds."
