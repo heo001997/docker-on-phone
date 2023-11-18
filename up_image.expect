@@ -26,117 +26,36 @@ spawn qemu-system-x86_64 -machine q35 -m $memory -smp cpus=$cpus -cpu qemu64 \
   -cdrom $iso_file \
   -nographic alpine.img
 
+#touch virtual_setup.expect && chmod +x virtual_setup.expect && vi virtual_setup.expect
+
 # Wait for the login prompt
 expect {
     "login:" {
         send "root\r"
-        send "\b\r"
-        send "\b\r"
-        send "\b\r"
-        send "\b\r"
         sleep 1
-        send "clear\r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
 
         # UP INTERNET
         send "setup-interfaces -a\r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
+        sleep 1
         send "ifup eth0\r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
+        sleep 1
         send "echo 'nameserver 1.1.1.1' > /etc/resolv.conf \r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
+        sleep 1
+
+        # Install expect
+        send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
 
         # Setup Alpine with answerfile
         send "wget -O answerfile https://raw.githubusercontent.com/heo001997/docker-on-phone/main/answerfile \r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
-        send "clear\r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
-        send "setup-alpine -f answerfile\r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
-
         exp_continue
     }
-    # Wait for input setup alpine - all default except erase
-    # Password
-    "New password:" {
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
-        send "\r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
-        send "\r"
-        exp_continue
-    }
-    # New user
-    "Setup a user?" {
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
-        send "\r"
-        send "\b\r"
-send "\b\r"
-send "\b\r"
-send "\b\r"
-sleep 1
-        send "\r"
-        exp_continue
-    }
-    # Erase disk(s)
-    "Erase the above disk(s) and continue? (y/n) " {
-        sleep 10
-        send "y"
-        sleep 3
-        send "\r"
-
-        exp_continue
-    }
-    # Poweroff after finish installation
-    "Installation is complete. Please reboot." {
-        sleep 3
-        # Send enough backspaces to clear the longest possible line
-        send "\b\r"
-        send "\b\r"
-        send "\b\r"
-        sleep 3
-        send "poweroff\r"
-        sleep 3
-        interact
+    # Run up_image.expect in virtual machine
+    # This to make setup-alpine input with invalid keystroke
+    "'answerfile' saved" {
+        sleep 2
+        send "./up_image.expect"
+        sleep 2
+        exit 0
     }
     timeout {
         puts "Login prompt not received within 240 seconds."

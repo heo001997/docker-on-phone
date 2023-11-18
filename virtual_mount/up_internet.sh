@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/ash
 
 setup-interfaces -a
 ifup eth0
