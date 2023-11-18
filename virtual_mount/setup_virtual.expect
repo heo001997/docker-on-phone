@@ -18,26 +18,13 @@ expect {
         send "\r"
         exp_continue
     }
-    "Erase the above disk(s) and continue? (y/n)" {
-        sleep 1
-        send "y\r"
-        sleep 1
-        exp_continue
-    }
-    "y: not found" {
-        sleep 1
-        send "setup-disk -m sys -s 0 /dev/sda \r"
-        sleep 1
-        exit 0
-    }
-    "Installation is complete. Please reboot." {
-        sleep 1
-        send "poweroff\r"
-        sleep 1
-        exit 0
-    }
     timeout {
         puts "Login prompt not received within 240 seconds."
         exit 1
+    }
+    # Catch end-of-file condition
+    eof {
+        spawn sh -c "expect setup_virtual_erase.expect"
+        expect eof
     }
 }

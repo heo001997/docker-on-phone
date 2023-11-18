@@ -36,17 +36,17 @@ spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -
 expect {
     "login:" {
         send "root\r"
-        sleep 1
+        after 1000
 
         # Copy files from hostshare
         send "mkdir -p /mnt/hostshare\r"
-        sleep 1
+        after 1000
         send "mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare"
         send "\r"
-        sleep 1
+        after 1000
         send "cp /mnt/hostshare/* ~/"
         send "\r"
-        sleep 1
+        after 1000
 
         # UP INTERNET
         send "./up_internet.sh \r"
@@ -54,39 +54,15 @@ expect {
         # Install expect
         send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
 
-        # Setup Alpine
-        send "setup-alpine -f answerfile\r"
-
         exp_continue
-    }
-    "New password:" {
-        send "\r"
-        sleep 2
-        send "\r"
-        exp_continue
-    }
-    "Setup a user?" {
-        send "\r"
-        sleep 2
-        send "\r"
-        exp_continue
-    }
-    "Erase the above disk(s) and continue? (y/n)" {
-        sleep 2
-        send "y"
-        sleep 2
-        send "\r"
-        sleep 2
-        exp_continue
-    }
-    "Installation is complete. Please reboot." {
-        sleep 2
-        send "poweroff\r"
-        sleep 2
-        exit 0
     }
     timeout {
         puts "Login prompt not received within 240 seconds."
         exit 1
+    }
+    # Catch end-of-file condition
+    eof {
+        spawn sh -c "expect setup_virtual.expect"
+        expect eof
     }
 }
