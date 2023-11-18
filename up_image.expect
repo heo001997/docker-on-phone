@@ -58,13 +58,13 @@ expect {
     }
     "New password:" {
         send "\r"
-        sleep 1
+        sleep 2
         send "\r"
         exp_continue
     }
     "Setup a user?" {
         send "\r"
-        sleep 1
+        sleep 2
         send "\r"
         exp_continue
     }
