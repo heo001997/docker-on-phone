@@ -39,9 +39,11 @@ expect {
         sleep 1
 
         # Copy files from hostshare
-        send "mkdir -p /mnt/hostshare"
+        send "mkdir -p /mnt/hostshare\r"
         send "mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare"
+        send "\r"
         send "cp /mnt/hostshare/* ~/"
+        send "\r"
 
         # UP INTERNET
         send "./up_internet.sh \r"
@@ -50,7 +52,7 @@ expect {
         send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
 
         # Setup Alpine
-        send "setup-alpine -f answerfile"
+        send "setup-alpine -f answerfile\r"
 
         exp_continue
     }
