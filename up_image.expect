@@ -59,7 +59,7 @@ expect {
         send "expect setup_virtual.expect\r"
 
         # spawn sh -c "expect up_virtual_setup.expect $cpus $memory $hard_disk"
-        spawn sh -c "spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -cpu qemu64 \
+        send "spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -cpu qemu64 \
             -drive if=pflash,format=raw,read-only=on,file=$env(PREFIX)/share/qemu/edk2-x86_64-code.fd \
             -netdev user,id=n1, \
                 hostfwd=tcp::2222-:22, \
