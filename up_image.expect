@@ -58,8 +58,6 @@ expect {
         # Start script on vm
         send "expect setup_virtual.expect\r"
 
-        # spawn sh -c "expect up_virtual_setup.expect $cpus $memory $hard_disk"
-
         exp_continue
     }
     timeout {

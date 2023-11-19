@@ -1,22 +1,17 @@
 #!/usr/bin/expect -f
 
 # Set the terminal type to avoid issues with escape sequences
-set timeout 1000
+set timeout 240
 
 # Check the number of arguments
-if {$argc != 3} {
-    puts "Usage: $argv0 <cpus> <ram-in-GB> <hard-disk-in-GB>"
+if {$argc != 2} {
+    puts "Usage: $argv0 <cpus> <ram-in-GB>"
     exit 1
 }
 
 # Assign arguments to variables
 set cpus [lindex $argv 0]
 set memory [lindex $argv 1]
-set hard_disk [lindex $argv 2]
-set iso_file [lindex [glob alpine-virt-*-x86_64.iso] 0]
-
-# Start build QEMU image
-exec qemu-img create -f qcow2 alpine.img ${hard_disk}G
 
 # Build virtual mount
 exec mkdir -p $env(PREFIX)/share/virtual_mount
@@ -25,9 +20,7 @@ exec cp -r virtual_mount $env(PREFIX)/share/
 # Start the QEMU process
 spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -cpu qemu64 \
   -drive if=pflash,format=raw,read-only=on,file=$env(PREFIX)/share/qemu/edk2-x86_64-code.fd \
-  -netdev user,id=n1, \
-    hostfwd=tcp::2222-:22, \
-    hostfwd=tcp::8000-:8000 \
+  -netdev user,id=n1,hostfwd=tcp::2222-:22,hostfwd=tcp::8000-:80 \
   -device virtio-net,netdev=n1 \
   -fsdev local,id=fsdev0,path=$env(PREFIX)/share/virtual_mount,security_model=mapped \
   -device virtio-9p-pci,fsdev=fsdev0,mount_tag=hostshare \
@@ -35,18 +28,15 @@ spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -
 
 # Wait for the login prompt
 expect {
-    "$ " {
+    " login:" {
         sleep 1
         send "root \r"
+        after 1000
+        send "\r"
         sleep 1
 
         # Copy files from hostshare
-        send "mkdir -p /mnt/hostshare \r"
-        sleep 1
-        send "mount -t 9p -o trans=virtio,version=9p2000.L hostshare /mnt/hostshare"
-        send "\r"
-        sleep 1
-        send "cp /mnt/hostshare/* ~/"
+        send "cp /hostshare/* ~/"
         send "\r"
         sleep 1
 
@@ -57,12 +47,18 @@ expect {
         send "apk add expect --repository=https://dl-cdn.alpinelinux.org/alpine/latest-stable/main \r"
 
         # Start script on vm
-        send "expect setup_virtual.expect\r"
+        send "apk update && apk add docker \r"
+        sleep 1
+        send "service docker start \r"
+        sleep 1
+        send "rc-update add docker \r"
+        sleep 1
+        send "docker run -d --name my-nginx -p 8000:80 nginx \r"
+        sleep 1
+        send "poweroff \r"
+        sleep 1
 
         exp_continue
-    }
-    "$ " {
-
     }
     timeout {
         puts "Login prompt not received within 240 seconds."
