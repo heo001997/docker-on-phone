@@ -25,11 +25,11 @@ exec cp -r virtual_mount $env(PREFIX)/share/
 # Start the QEMU process
 spawn qemu-system-x86_64 -machine q35 -m [expr {$memory*1024}] -smp cpus=$cpus -cpu qemu64 \
   -drive if=pflash,format=raw,read-only=on,file=$env(PREFIX)/share/qemu/edk2-x86_64-code.fd \
-  -netdev user,id=n1,hostfwd=tcp::10022-:22,
-    hostfwd=tcp::10080-:80,
-    hostfwd=tcp::18080-:8080,
-    hostfwd=tcp::10443-:443,
-    hostfwd=tcp::13000-:3000,
+  -netdev user,id=n1,hostfwd=tcp::10022-:22, \
+    hostfwd=tcp::10080-:80, \
+    hostfwd=tcp::18080-:8080, \
+    hostfwd=tcp::10443-:443, \
+    hostfwd=tcp::13000-:3000, \
     hostfwd=tcp::13035-:3035 \
   -device virtio-net,netdev=n1 \
   -cdrom $iso_file \
